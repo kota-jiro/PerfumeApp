@@ -8,12 +8,25 @@ use Illuminate\Http\Request;
 
 class AdminProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::orderBy('id', 'asc')->get();
-        $total = Product::count();
-        return view('admin.product.home', compact(['products', 'total']));
+        $categoryFilter = $request->input('category', null); // Get selected category filter
+
+        // If a filter is selected, filter products based on category
+        if ($categoryFilter) {
+            $products = Product::where('category', $categoryFilter)->orderBy('id', 'asc')->get();
+            $totalFiltered = Product::where('category', $categoryFilter)->count();
+        } else {
+            $products = Product::orderBy('id', 'asc')->get();
+            $totalFiltered = Product::count(); // Total products count when no filter is applied
+        }
+
+        // Get all distinct categories for the filter dropdown
+        $categories = Product::distinct()->pluck('category');
+
+        return view('admin.product.home', compact('products', 'totalFiltered', 'categories', 'categoryFilter'));
     }
+
     public function create()
     {
         return view('admin.product.create');
