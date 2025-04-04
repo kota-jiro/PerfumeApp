@@ -10,9 +10,10 @@ class AdminProductController extends Controller
 {
     public function index(Request $request)
     {
-        $categoryFilter = $request->input('category', null); // Get selected category filter
+        // Check if a category filter is selected (Male/Female)
+        $categoryFilter = $request->input('category', null);
 
-        // If a filter is selected, filter products based on category
+        // If a filter is selected, filter products based on the selected category
         if ($categoryFilter) {
             $products = Product::where('category', $categoryFilter)->orderBy('id', 'asc')->get();
             $totalFiltered = Product::where('category', $categoryFilter)->count();
@@ -21,11 +22,25 @@ class AdminProductController extends Controller
             $totalFiltered = Product::count(); // Total products count when no filter is applied
         }
 
+        // Count the total number of products and the count of Male and Female categories
+        $totalMale = Product::where('category', 'Male')->count();
+        $totalFemale = Product::where('category', 'Female')->count();
+        $total = Product::count();
+
         // Get all distinct categories for the filter dropdown
         $categories = Product::distinct()->pluck('category');
 
-        return view('admin.product.home', compact('products', 'totalFiltered', 'categories', 'categoryFilter'));
+        return view('admin.product.home', compact(
+            'products',
+            'total',
+            'totalMale',
+            'totalFemale',
+            'categoryFilter',
+            'totalFiltered',
+            'categories'
+        ));
     }
+
 
     public function create()
     {

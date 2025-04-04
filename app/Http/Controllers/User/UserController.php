@@ -12,12 +12,30 @@ use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('id', 'asc')->get();
+        // Check if a usertype filter is selected
+        $usertypeFilter = $request->input('usertype', null);
+
+        // If a filter is selected, filter users based on the selected usertype
+        if ($usertypeFilter) {
+            $users = User::where('usertype', $usertypeFilter)->orderBy('id', 'asc')->get();
+            $totalFiltered = User::where('usertype', $usertypeFilter)->count();
+        } else {
+            $users = User::orderBy('id', 'asc')->get();
+            $totalFiltered = User::count(); // Total users count when no filter is applied
+        }
+
+        // Count the total number of users and the count of admins and users
+        $totalAdmins = User::where('usertype', 'admin')->count();
+        $totalUsers = User::where('usertype', 'user')->count();
         $total = User::count();
-        return view('admin.user.index', compact(['users', 'total']));
+
+        return view('admin.user.index', compact('users', 'total', 'totalAdmins', 'totalUsers', 'usertypeFilter', 'totalFiltered'));
     }
+
+
+
     public function create()
     {
 
@@ -54,12 +72,12 @@ class UserController extends Controller
 
         if ($user) {
             event(new Registered($user));
-    
+
             return redirect()
                 ->route('admin.users')
                 ->with('success', 'User "' . $user->firstname . ' ' . $user->lastname . '" Added Successfully!');
         }
-    
+
         return back()
             ->withInput() // This will retain input values in case of validation error
             ->withErrors(['error' => 'Failed to add user "' . $user->firstname . ' ' . $user->lastname . '". Please try again.']);
