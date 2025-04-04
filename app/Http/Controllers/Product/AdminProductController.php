@@ -75,12 +75,12 @@ class AdminProductController extends Controller
             'category' => 'required|in:Male Perfume,Female Perfume',
             'description' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'stock_small' => 'required|integer|min:0',
-            'stock_medium' => 'required|integer|min:0',
-            'stock_large' => 'required|integer|min:0',
-            'price_small' => 'required|numeric|min:1199|max:2399',
-            'price_medium' => 'required|numeric|min:3599|max:5999',
-            'price_large' => 'required|numeric|min:11999|max:23999',
+            'stock_small' => 'nullable|integer|min:0',
+            'stock_medium' => 'nullable|integer|min:0',
+            'stock_large' => 'nullable|integer|min:0',
+            'price_small' => 'nullable|numeric|min:1199|max:2399',
+            'price_medium' => 'nullable|numeric|min:3599|max:5999',
+            'price_large' => 'nullable|numeric|min:11999|max:23999',
         ]);
 
         $product = Product::findOrFail($id);

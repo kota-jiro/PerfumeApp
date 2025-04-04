@@ -10,11 +10,11 @@ class ProductController extends Controller
 {
     public function indexAll()
     {
-        $products = Product::all();
+        $filteredProducts = Product::all();
         $maleCount = Product::where('category', 'Male Perfume')->count();
         $femaleCount = Product::where('category', 'Female Perfume')->count();
         $total = Product::count();
-        return view('products.index', compact('products', 'maleCount', 'femaleCount', 'total'));
+        return view('products.index', compact('filteredProducts', 'maleCount', 'femaleCount', 'total'));
     }
 
     public function filterByCategory(Request $request)
