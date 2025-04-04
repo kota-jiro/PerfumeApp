@@ -22,11 +22,7 @@
                                 <option value="">All Categories</option>
                                 <option value="Male Perfume" {{ $categoryFilter == 'Male Perfume' ? 'selected' : '' }}>Male Perfume</option>
                                 <option value="Female Perfume" {{ $categoryFilter == 'Female Perfume' ? 'selected' : '' }}>Female Perfume</option>
-                                <!-- @foreach ($categories as $category)
-                                    <option value="{{ $category }}" {{ $categoryFilter == $category ? 'selected' : '' }}>
-                                        {{ ucfirst($category) }}
-                                    </option>
-                                @endforeach -->
+                                
                             </select>
                         </form>
                     </div>
