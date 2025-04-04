@@ -14,6 +14,26 @@
                         <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Add User</a>
                     </div>
                     <hr />
+                    <div class="mb-3">
+                        <!-- Usertype Filter Dropdown -->
+                        <form method="GET" action="{{ route('admin.users') }}" class="d-flex">
+                            <select name="usertype" class="form-select" onchange="this.form.submit()">
+                                <option value="">All Users</option>
+                                <option value="admin" {{ $usertypeFilter == 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="user" {{ $usertypeFilter == 'user' ? 'selected' : '' }}>User</option>
+                            </select>
+                        </form>
+                    </div>
+
+                    <div class="mb-3">
+                        <!-- Display the filtered total count of users -->
+                        <strong>Total:</strong> {{ $totalFiltered }}
+                        @if ($usertypeFilter)
+                            <span>({{ ucfirst($usertypeFilter) }})</span>
+                        @else
+                            <span>(All Users)</span>
+                        @endif
+                    </div>
                     @if (Session::has('success'))
                     <div class="alert alert-success" role="alert">
                         {{ Session::get('success') }}
@@ -89,7 +109,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td class="text-center">Users not found po!</td>
+                                <td class="text-center" colspan="10">Users not found!</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -124,12 +144,12 @@
             document.querySelectorAll(".userTypeChange").forEach(function(select) {
                 select.addEventListener("change", function() {
                     selectedUserId = this.getAttribute("data-user-id");
-                    selectedUserType = this.value; 
+                    selectedUserType = this.value;
                     let userName = this.closest("tr").querySelector(".user-name").innerText;
 
                     document.getElementById("userTypeChangeText").innerHTML =
                         `Are you sure you want to change <strong>${userName}</strong> to <strong>${selectedUserType}</strong>?`;
-                    
+
                     let userTypeChangeModal = new bootstrap.Modal(document.getElementById("userTypeChangeModal"));
                     userTypeChangeModal.show();
                 });
@@ -138,29 +158,29 @@
             document.getElementById("confirmUserTypeChange").addEventListener("click", function() {
                 if (selectedUserId && selectedUserType) {
                     fetch("{{ route('admin.users.updateRole') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            user_id: selectedUserId,
-                            usertype: selectedUserType
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                user_id: selectedUserId,
+                                usertype: selectedUserType
+                            })
                         })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert("Failed to update user type.");
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert("Failed to update user type.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
                 }
             });
         });
-        
+
         document.addEventListener("DOMContentLoaded", function() {
             var deleteModal = document.getElementById('deleteModal');
             deleteModal.addEventListener('show.bs.modal', function(event) {

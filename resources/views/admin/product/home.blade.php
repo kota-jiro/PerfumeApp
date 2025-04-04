@@ -20,11 +20,9 @@
                         <form method="GET" action="{{ route('admin.products') }}" class="d-flex">
                             <select name="category" class="form-select" onchange="this.form.submit()">
                                 <option value="">All Categories</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category }}" {{ $categoryFilter == $category ? 'selected' : '' }}>
-                                        {{ ucfirst($category) }}
-                                    </option>
-                                @endforeach
+                                <option value="Male Perfume" {{ $categoryFilter == 'Male Perfume' ? 'selected' : '' }}>Male Perfume</option>
+                                <option value="Female Perfume" {{ $categoryFilter == 'Female Perfume' ? 'selected' : '' }}>Female Perfume</option>
+                                
                             </select>
                         </form>
                     </div>
