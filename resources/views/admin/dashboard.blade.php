@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-[var(--primary-color)] leading-tight">
+        <h2 class="font-semibold text-xl text-[var(--primary-color)] leading-tight">
             {{ __('Dashboard Admin') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-[var(--background-color)] text-[var(--text-color)]">
+    <div class="py-6 bg-[var(--background-color)] text-[var(--text-color)]">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg p-8">
                 <h3 class="text-3xl font-bold text-[var(--primary-color)] mb-4">{{ __("Welcome back, {$user->firstname}") }}</h3>
