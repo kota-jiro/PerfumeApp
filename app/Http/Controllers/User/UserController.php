@@ -19,10 +19,10 @@ class UserController extends Controller
 
         // If a filter is selected, filter users based on the selected usertype
         if ($usertypeFilter) {
-            $users = User::where('usertype', $usertypeFilter)->orderBy('id', 'asc')->get();
+            $users = User::where('usertype', $usertypeFilter)->orderBy('id', 'desc')->paginate(2);
             $totalFiltered = User::where('usertype', $usertypeFilter)->count();
         } else {
-            $users = User::orderBy('id', 'asc')->get();
+            $users = User::orderBy('id', 'desc')->paginate(2);
             $totalFiltered = User::count(); // Total users count when no filter is applied
         }
 

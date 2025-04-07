@@ -15,10 +15,10 @@ class AdminProductController extends Controller
 
         // If a filter is selected, filter products based on the selected category
         if ($categoryFilter) {
-            $products = Product::where('category', $categoryFilter)->orderBy('id', 'asc')->get();
+            $products = Product::where('category', $categoryFilter)->orderBy('id', 'desc')->paginate(2);
             $totalFiltered = Product::where('category', $categoryFilter)->count();
         } else {
-            $products = Product::orderBy('id', 'asc')->get();
+            $products = Product::orderBy('id', 'desc')->paginate(2);
             $totalFiltered = Product::count(); // Total products count when no filter is applied
         }
 
