@@ -1,95 +1,140 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-[var(--primary-color)] leading-tight">
+        <h2 class="font-semibold text-xl text-[var(--primary-color)] leading-tight">
             {{ __('Products') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-light">
+    <div class="py-6 bg-light">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <!-- Search Form -->
-                    <div class="d-flex justify-content-between mb-6">
-                        <form action="{{ route('products.search') }}" method="GET" class="d-flex w-100">
-                            <input class="form-control rounded-pill py-2 px-4 border-gray-300" type="search" name="search" value="{{ request()->search }}" placeholder="Search products..." aria-label="Search" style="width: 250px;">
-                            <button class="btn btn-outline-danger rounded-pill px-4 ms-2" type="submit">Search</button>
-                        </form>
+                    <!-- Categories Section -->
+                    <h3 class="font-semibold text-xl mb-4 text-[var(--primary-color)]">Categories</h3>
+                    @php $activeCategory = request()->category ?? 'All'; @endphp
+                    <div class="d-flex justify-content-start gap-4">
+                        <a href="{{ route('products.filter', ['category' => 'All']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ $activeCategory == 'All' ? 'active' : '' }}">All ({{ $total }})</a>
+                        <a href="{{ route('products.filter', ['category' => 'Male Perfume']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ $activeCategory == 'Male Perfume' ? 'active' : '' }}">Male Perfume ({{ $maleCount }})</a>
+                        <a href="{{ route('products.filter', ['category' => 'Female Perfume']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ $activeCategory == 'Female Perfume' ? 'active' : '' }}">Female Perfume ({{ $femaleCount }})</a>
                     </div>
 
-                    <!-- Product Carousel -->
-                    @if($filteredProducts->isNotEmpty())
-                        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-                            <div class="carousel-inner">
-                                @foreach ($filteredProducts as $index => $product)
-                                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                        <div class="row align-items-center mb-6 border p-5 rounded-lg shadow-md" style="background-color: #f8e0e0;">
-                                            <div class="col-md-4 text-center">
-                                                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->title }}" class="img-fluid rounded-lg" style="height: 300px; object-fit: cover;">
-                                            </div>
-                                            <div class="col-md-8">
-                                                <h3 class="text-[var(--primary-color)] font-semibold text-2xl mb-2">{{ $product->title }}</h3>
-                                                <p class="text-gray-700 text-lg mb-4">{{ $product->description }}</p>
-                                                <h4 class="font-semibold text-dark text-xl mb-4">$ {{ number_format($product->price_small, 2) }}</h4>
-                                                <div class="d-flex">
-                                                    <button class="btn btn-danger rounded-pill me-3 py-2 px-5 hover:bg-red-700 transition duration-300">Place Order</button>
-                                                    <button class="btn btn-outline-danger rounded-pill py-2 px-5 hover:bg-red-500 hover:text-white transition duration-300">Checkout</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    @else
-                        <p>No products found.</p>
-                    @endif
-
-                    <!-- Categories Section at the Bottom -->
-                    <div class="mt-6">
-                        <h3 class="font-semibold text-xl mb-4 text-[var(--primary-color)]">Categories</h3>
-                        <div class="d-flex justify-content-start gap-4">
-                            <a href="{{ route('products.filter', ['category' => 'All']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ request()->category == 'All' ? 'active' : '' }}">All ({{ $total }})</a>
-                            <a href="{{ route('products.filter', ['category' => 'Male Perfume']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ request()->category == 'Male Perfume' ? 'active' : '' }}">Male Perfume ({{ $maleCount }})</a>
-                            <a href="{{ route('products.filter', ['category' => 'Female Perfume']) }}" class="btn btn-outline-danger rounded-pill px-4 {{ request()->category == 'Female Perfume' ? 'active' : '' }}">Female Perfume ({{ $femaleCount }})</a>
-                        </div>
-                    </div>
-
-                    <!-- Display Filtered Products Below Carousel -->
+                    <!-- Product Cards -->
                     <div class="mt-6">
                         @if(request()->category)
-                            <h3 class="font-semibold text-2xl text-[var(--primary-color)] mt-6">{{ request()->category }}</h3>
-                            <div class="row row-cols-1 row-cols-md-4 g-4">
-                                @foreach ($filteredProducts as $product)
-                                    <div class="col">
-                                        <div class="card h-100 shadow-md border-0 rounded-lg">
-                                            <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->title }}" class="card-img-top rounded-lg" style="height: 200px; object-fit: cover;">
-                                            <div class="card-body">
-                                                <h5 class="card-title text-[var(--primary-color)]">{{ $product->title }}</h5>
-                                                <p class="card-text text-gray-700" style="height: 75px; overflow: hidden; text-overflow: ellipsis;" title="{{ $product->description }}">{{
-                                                    \Str::limit($product->description, 50, '...') }}</p>
-                                                <h6 class="font-semibold text-dark text-lg mb-2">$ {{ number_format($product->price_small, 2) }}</h6>
-                                            </div>
-                                            <div class="card-footer text-center">
-                                                <button class="btn btn-danger rounded-pill py-2 px-5 hover:bg-red-700 transition duration-300">Place Order</button>
-                                            </div>
-                                        </div>
+                        <h3 class="font-semibold text-2xl text-[var(--primary-color)] mt-6">{{ request()->category }}</h3>
+                        @endif
+
+                        @if($filteredProducts->isEmpty())
+                        <p class="mt-4 text-danger">No products found for this category.</p>
+                        @else
+                        <div class="row row-cols-1 row-cols-md-4 g-4">
+                            @foreach ($filteredProducts as $product)
+                            <div class="col">
+                                <div class="card h-100 shadow-md border-0 rounded-lg product-card" data-product='@json($product)'>
+                                    <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->title }}" class="card-img-top rounded-lg" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-[var(--primary-color)]">{{ $product->title }}</h5>
+                                        <p class="card-text text-gray-700" style="height: 75px; overflow: hidden; text-overflow: ellipsis;" title="{{ $product->description }}">{{ \Str::limit($product->description, 50, '...') }}</p>
+                                        <h6 class="font-semibold text-dark text-lg mb-2">₱ {{ number_format($product->price_small, 2) }}</h6>
                                     </div>
-                                @endforeach
+                                </div>
                             </div>
+                            @endforeach
+                        </div>
                         @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalProductImage" src="" class="img-fluid mb-3 rounded" alt="Product Image">
+                    <h4 id="modalProductTitle"></h4>
+                    <p id="modalProductDescription"></p>
+                    <p><strong>Price:</strong> ₱<span id="modalProductPrice"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-danger" id="addToCartBtn">Add to Cart</button>
+                    <button class="btn btn-danger" id="checkoutBtn">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="fixed-bottom p-4 d-flex justify-content-end">
+        <button class="btn btn-dark rounded-pill px-4" id="viewCartBtn">View Cart (<span id="cartCount">0</span>)</button>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cartItems">
+                    <p>No products in cart.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="finalCheckout">Confirm Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedProduct = null;
+        let cart = [];
+
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const product = JSON.parse(card.getAttribute('data-product'));
+                selectedProduct = product;
+                document.getElementById('modalProductTitle').innerText = product.title;
+                document.getElementById('modalProductDescription').innerText = product.description;
+                document.getElementById('modalProductPrice').innerText = parseFloat(product.price_small).toFixed(2);
+                document.getElementById('modalProductImage').src = `/images/products/${product.image}`;
+                new bootstrap.Modal(document.getElementById('productModal')).show();
+            });
+        });
+
+        document.getElementById('addToCartBtn').addEventListener('click', () => {
+            if (selectedProduct) {
+                cart.push(selectedProduct);
+                document.getElementById('cartCount').innerText = cart.length;
+                bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+            }
+        });
+
+        document.getElementById('viewCartBtn').addEventListener('click', () => {
+            const cartItemsDiv = document.getElementById('cartItems');
+            cartItemsDiv.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    cartItemsDiv.innerHTML += `<div class="mb-2"><strong>${item.title}</strong> - ₱${parseFloat(item.price_small).toFixed(2)}</div>`;
+                });
+            }
+            new bootstrap.Modal(document.getElementById('cartModal')).show();
+        });
+
+        document.getElementById('finalCheckout').addEventListener('click', () => {
+            alert('Checkout successful! Your order is being processed.');
+            cart = [];
+            document.getElementById('cartCount').innerText = '0';
+            bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+        });
+    </script>
 </x-app-layout>
