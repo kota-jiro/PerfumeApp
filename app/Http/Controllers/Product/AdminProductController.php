@@ -49,7 +49,7 @@ class AdminProductController extends Controller
     public function save(Request $request)
     {
         $validation = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:products,title',
             'category' => 'required|in:Male Perfume,Female Perfume',
             'description' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -85,8 +85,10 @@ class AdminProductController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $product = Product::findOrFail($id);
+        
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:products,title,' . $product->id,
             'category' => 'required|in:Male Perfume,Female Perfume',
             'description' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -97,8 +99,6 @@ class AdminProductController extends Controller
             'price_medium' => 'nullable|numeric|min:3599|max:5999',
             'price_large' => 'nullable|numeric|min:11999|max:23999',
         ]);
-
-        $product = Product::findOrFail($id);
 
         $data = $request->only([
             'title',
