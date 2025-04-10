@@ -48,7 +48,7 @@
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="description" class="form-label">Description</label>
-                                <input type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="Description" />
+                                <textarea type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="Description" ></textarea>
                                 @error('description')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -83,7 +83,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                                 <hr>
-                                <label for="price_small">Price for Small</label>
                                 <input type="number" name="price_small" class="form-control mt-2" value="{{ old('price_small') }}" placeholder="Price for Small ₱1199 - ₱2399">
                                 @error('price_small')
                                 <span class="text-danger">{{ $message }}</span>
@@ -96,7 +95,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                                 <hr>
-                                <input type="number" name="price_medium" class="form-control mt-2" value="{{ old('price_medium') }}"  placeholder="Price for Medium ₱3599 - ₱5999">
+                                <input type="number" name="price_medium" class="form-control mt-2" value="{{ old('price_medium') }}" placeholder="Price for Medium ₱3599 - ₱5999">
                                 @error('price_medium')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -108,7 +107,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                                 <hr>
-                                <input type="number" name="price_large" class="form-control mt-2" value="{{ old('price_large') }}"  placeholder="Price for Large ₱11999 - ₱23999">
+                                <input type="number" name="price_large" class="form-control mt-2" value="{{ old('price_large') }}" placeholder="Price for Large ₱11999 - ₱23999">
                                 @error('price_large')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror

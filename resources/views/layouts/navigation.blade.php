@@ -114,11 +114,21 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-dropdown-link>
-                    </form>
+                    @if (auth()->user()->usertype == 'admin')
+                        <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-dropdown-link>
+                        </form>
+                    @else
+                        <x-dropdown-link :href="route('profile.show')">Profile</x-dropdown-link>
+                        <x-dropdown-link :href="route('cart.index')">My Cart</x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.orders')">Transaction History</x-dropdown-link>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-dropdown-link>
+                        </form>
+                    @endif
                 </x-slot>
             </x-dropdown>
         </div>

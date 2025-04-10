@@ -49,6 +49,8 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'phone' => ['nullable', 'string', 'max:11'],
+            'address' => ['nullable', 'string', 'max:255'],
         ]);
 
         $imageName = 'default.jpg';
@@ -66,6 +68,8 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'image' => $imageName,
+            'phone' => $request->phone,
+            'address' => $request->address,
         ]);
 
         event(new Registered($user));
@@ -96,6 +100,8 @@ class UserController extends Controller
             'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $id],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validate image
+            'phone' => ['nullable', 'string', 'max:11'],
+            'address' => ['nullable', 'string', 'max:255'],
         ]);
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -118,6 +124,8 @@ class UserController extends Controller
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
         $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
 
         if ($user->save()) {
             session()->flash('success', 'User "' . $user->firstname . ' ' . $user->lastname . '" Updated Successfully!');

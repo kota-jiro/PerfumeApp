@@ -3,3 +3,14 @@
         <p>&copy; {{ date('Y') }} Leo's Perfume. All rights reserved.</p>
     </div>
 </footer>
+<style>
+    p {
+        color: text-gray-600;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+</style>

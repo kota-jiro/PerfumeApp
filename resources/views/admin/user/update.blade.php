@@ -35,6 +35,26 @@
                             </div>
                         </div>
 
+                        <!-- <div class="row mb-3">
+                            <div class="col">
+                                <label for="phone" class="form-label">Phone #</label>
+                                <input type="number" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="Phone Number (Optional)" required autofocus autocomplete="phone" />
+                                @error('phone')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" name="address" class="form-control" value="{{ old('address', $users->address) }}" placeholder="Address(Optional)" required autofocus autocomplete="address" />
+                                @error('address')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div> -->
+
                         <div class="row">
                             <div class="col  mb-3">
                                 <label for="form-label">Email</label>

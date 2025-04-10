@@ -61,7 +61,7 @@
                     <p id="modalProductDescription"></p>
                     <p><strong>Price:</strong> ₱<span id="modalProductPrice"></span></p>
                 </div>
-                <div class="mt-3 px-3">
+                <div class="m-3 px-3">
                     <label for="productSize" class="form-label">Select Size:</label>
                     <select id="productSize" class="form-select"></select>
                 </div>
@@ -90,7 +90,7 @@
                     <p>No products in cart.</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success" id="finalCheckout">Confirm Checkout</button>
+                    <button class="btn btn-success" id="finalCheckout">Confirm Checkout All</button>
                 </div>
             </div>
         </div>
@@ -237,25 +237,69 @@
             const cartItemsDiv = document.getElementById('cartItems');
             cartItemsDiv.innerHTML = '';
             if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
+            cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
             } else {
-                cart.forEach((item, index) => {
-                    cartItemsDiv.innerHTML += `
-                        <div class="mb-2 d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${item.product_name}</strong> (${item.size}) - ₱${parseFloat(item.price).toFixed(2)}
-                                <br>
-                                <label for="quantity-${index}" class="form-label">Quantity:</label>
-                                <input type="number" id="quantity-${index}" class="form-control form-control-sm" value="${item.quantity}" min="1" max="${item.stock}" onchange="updateQuantity(${index}, this.value)">
-                                <small class="text-muted">Available stock: ${item.stock}</small>
-                            </div>
-                            <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
-                        </div>
-                    `;
-                });
+            cart.forEach((item, index) => {
+                cartItemsDiv.innerHTML += `
+                <div class="mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                    <strong>${item.product_name}</strong> (${item.size}) - ₱${parseFloat(item.price).toFixed(2)}
+                    <br>
+                    <label for="quantity-${index}" class="form-label">Quantity:</label>
+                    <input type="number" id="quantity-${index}" class="form-control form-control-sm" value="${item.quantity}" min="1" max="${item.stock}" onchange="updateQuantity(${index}, this.value)">
+                    <small class="text-muted">Available stock: ${item.stock}</small>
+                    </div>
+                    <div class="d-flex flex-column">
+                    <button class="btn btn-sm btn-danger mb-2" onclick="removeFromCart(${index})">Remove</button>
+                    <button class="btn btn-sm btn-success" onclick="checkoutProduct(${index})">Checkout</button>
+                    </div>
+                </div>
+                `;
+            });
             }
             new bootstrap.Modal(document.getElementById('cartModal')).show();
         });
+
+        function checkoutProduct(index) {
+            const product = cart[index];
+            const formattedProduct = {
+            product_name: product.product_name,
+            price: product.price,
+            size: product.size,
+            image: product.image,
+            product_id: product.product_id,
+            quantity: product.quantity
+            };
+
+            fetch("{{ route('checkout.store') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({
+                cart: [formattedProduct]
+            }),
+            })
+            .then(response => response.json())
+            .then(data => {
+            if (response.ok) {
+                showAlert(data.message);
+                cart.splice(index, 1); // Remove the product from the cart
+                document.getElementById('cartCount').innerText = cart.length;
+                const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+                localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
+                const cartItemsDiv = document.getElementById('cartItems');
+                cartItemsDiv.innerHTML = cart.length === 0 ? '<p>No products in cart.</p>' : '';
+            } else {
+                showAlert(data.message); // Show error message
+            }
+            })
+            .catch(error => {
+            console.error('Checkout failed:', error);
+            showAlert('An error occurred during checkout.');
+            });
+        }
 
         // Function to update the quantity of a product in the cart
         function updateQuantity(index, quantity) {
