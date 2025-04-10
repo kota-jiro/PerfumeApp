@@ -1,10 +1,9 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
+<section class="p-6 bg-white shadow-md rounded-lg">
+    <header class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-900">
             {{ __('Profile Information') }}
         </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-gray-600">
             {{ __("Update your account's profile information and email address.") }}
         </p>
     </header>
@@ -13,53 +12,84 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('patch')
+
         <!-- Profile Image -->
-            <!-- Profile Image Preview -->
-        <div class="row mb-3">
-            <div class="col text-center">
-                <img id="imagePreview" src="{{ asset('images/users/' . ($user->image ?? 'default.jpg')) }}" alt="Profile Image" width="200" class="img-thumbnail">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col">
-                <input type="file" name="profile_image" id="imageInput" class="form-control" accept="image/*" onchange="previewImage(event)">
-                @error('profile_image')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+        <div class="text-center">
+            <img id="imagePreview" src="{{ asset('images/users/' . ($user->image ?? 'default.jpg')) }}" alt="Profile Image" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-md">
+            <label for="imageInput" class="cursor-pointer inline-block px-4 py-2 bg-indigo-600 text-gray-600 font-medium text-sm rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            {{ __('Update Profile Pic') }}
+            </label>
+            <input type="file" name="image" id="imageInput" class="hidden" accept="image/*" onchange="previewImage(event)">
+            <p id="fileName" class="mt-2 text-sm text-gray-600"></p>
+            @error('image')
+            <span class="text-sm text-red-600">{{ $message }}</span>
+            @enderror
         </div>
 
+        <script>
+            function previewImage(event) {
+            const imagePreview = document.getElementById('imagePreview');
+            const fileName = document.getElementById('fileName');
+            const file = event.target.files[0];
+
+            if (file) {
+                imagePreview.src = URL.createObjectURL(file);
+                fileName.textContent = `Selected file: ${file.name}`;
+            } else {
+                fileName.textContent = '';
+            }
+            }
+        </script>
+
+        <!-- First Name -->
         <div>
             <x-input-label for="firstname" :value="__('First Name')" />
-            <x-text-input id="firstname" name="firstname" type="text" class="mt-1 block w-full" :value="old('firstname', $user->firstname)" required autofocus autocomplete="firstname" />
+            <x-text-input id="firstname" name="firstname" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('firstname', $user->firstname)" required autofocus autocomplete="firstname" />
             <x-input-error class="mt-2" :messages="$errors->get('firstname')" />
         </div>
+
+        <!-- Last Name -->
         <div>
             <x-input-label for="lastname" :value="__('Last Name')" />
-            <x-text-input id="lastname" name="lastname" type="text" class="mt-1 block w-full" :value="old('lastname', $user->lastname)" required autofocus autocomplete="lastname" />
+            <x-text-input id="lastname" name="lastname" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('lastname', $user->lastname)" required autofocus autocomplete="lastname" />
             <x-input-error class="mt-2" :messages="$errors->get('lastname')" />
         </div>
 
+        @if ($user->usertype === 'user')
+            <!-- Phone -->
+            <div>
+                <x-input-label for="phone" :value="__('Phone')" />
+                <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('phone', $user->phone)" autocomplete="phone" />
+                <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+            </div>
+
+            <!-- Address -->
+            <div>
+                <x-input-label for="address" :value="__('Address')" />
+                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('address', $user->address)" autocomplete="address" />
+                <x-input-error class="mt-2" :messages="$errors->get('address')" />
+            </div>
+        @endif
+
+        <!-- Email -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-            <div>
-                <p class="text-sm mt-2 text-gray-800">
+            <div class="mt-4">
+                <p class="text-sm text-gray-800">
                     {{ __('Your email address is unverified.') }}
-
-                    <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button form="send-verification" class="underline text-sm text-indigo-600 hover:text-indigo-900">
                         {{ __('Click here to re-send the verification email.') }}
                     </button>
                 </p>
-
                 @if (session('status') === 'verification-link-sent')
-                <p class="mt-2 font-medium text-sm text-green-600">
+                <p class="mt-2 text-sm text-green-600">
                     {{ __('A new verification link has been sent to your email address.') }}
                 </p>
                 @endif
@@ -67,16 +97,13 @@
             @endif
         </div>
 
-        <div class="flex items-center gap-4">
+        <!-- Save Button -->
+        <div class="flex items-center justify-between">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
-
             @if (session('status') === 'profile-updated')
-            <p
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition
-                x-init="setTimeout(() => show = false, 2000)"
-                class="text-sm text-gray-600">{{ __('Saved.') }}</p>
+            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-green-600">
+                {{ __('Saved.') }}
+            </p>
             @endif
         </div>
     </form>
