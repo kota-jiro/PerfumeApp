@@ -73,8 +73,7 @@ h3
 
 }
 p {
-    color: var(--text-color);
-    font-size: 1.25rem;
+    color: text-gray-600;
     margin-bottom: 1rem;
     line-height: 1.5;
     text-align: center;

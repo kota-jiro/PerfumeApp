@@ -74,12 +74,12 @@
                             {{-- Small Size --}}
                             <div class="col">
                                 <label for="stock_small">Small (10ml - 20ml)</label>
-                                <input type="number" name="stock_small" class="form-control" value="{{ old('stock_small', $products->stock_small) }}">
+                                <input type="number" name="stock_small" class="form-control" value="{{ old('stock_small', $products->stock_small) }}" placeholder="Stock for Small">
                                 @error('stock_small')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
 
-                                <input type="number" name="price_small" class="form-control mt-2" value="{{ old('price_small', $products->price_small) }}">
+                                <input type="number" name="price_small" class="form-control mt-2" value="{{ old('price_small', $products->price_small) }}" placeholder="Price for Small ₱1199 - ₱2399">
                                 @error('price_small')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -88,12 +88,12 @@
                             {{-- Medium Size --}}
                             <div class="col">
                                 <label for="stock_medium">Medium (30ml - 50ml)</label>
-                                <input type="number" name="stock_medium" class="form-control" value="{{ old('stock_medium', $products->stock_medium) }}">
+                                <input type="number" name="stock_medium" class="form-control" value="{{ old('stock_medium', $products->stock_medium) }}" placeholder="Stock for Medium">
                                 @error('stock_medium')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
 
-                                <input type="number" name="price_medium" class="form-control mt-2" value="{{ old('price_medium', $products->price_medium) }}">
+                                <input type="number" name="price_medium" class="form-control mt-2" value="{{ old('price_medium', $products->price_medium) }}" placeholder="Price for Medium ₱3599 - ₱5999">
                                 @error('price_medium')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -102,12 +102,12 @@
                             {{-- Large Size --}}
                             <div class="col">
                                 <label for="stock_large">Large (100ml - 200ml)</label>
-                                <input type="number" name="stock_large" class="form-control" value="{{ old('stock_large', $products->stock_large) }}">
+                                <input type="number" name="stock_large" class="form-control" value="{{ old('stock_large', $products->stock_large) }}" placeholder="Stock for Large">
                                 @error('stock_large')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
 
-                                <input type="number" name="price_large" class="form-control mt-2" value="{{ old('price_large', $products->price_large) }}">
+                                <input type="number" name="price_large" class="form-control mt-2" value="{{ old('price_large', $products->price_large) }}" placeholder="Price for Large ₱11999 - ₱23999">
                                 @error('price_large')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror

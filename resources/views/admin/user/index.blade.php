@@ -81,6 +81,8 @@
                                 <th>Name</th>
                                 <th>UserType</th>
                                 <th>Email</th>
+                                <th>Phone #</th>
+                                <th>Address</th>
                                 <th>Created At</th>
                                 <th>Updated At</th>
                                 <th>Action</th>
@@ -102,7 +104,9 @@
                                     </select>
                                 </td>
                                 <td class="align-middle">{{ $user->email }}</td>
-                                <td class="align-middle">{{ $user->created_at }}</td>
+                                <td class="align-middle">{{ $user->phone ?? '-----'  }}</td>
+                                <td class="align-middle">{{ $user->address ?? '-----' }}</td>
+                                <td class="align-middle">{{ $user->created_at}}</td>
                                 <td class="align-middle">{{ $user->updated_at }}</td>
                                 <td class="align-middle">
                                     <!-- Delete User Button (Triggers Modal) -->
@@ -153,29 +157,28 @@
                     <div class="d-flex justify-content-center mt-1">
                         <nav aria-label="Page navigation">
                             <ul class="pagination pagination-sm">
-                                {{-- Check if there are pages --}}
                                 @if ($users->lastPage() > 1)
-                                {{-- Previous Page Link --}}
-                                <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
-                                    <a class="page-link" href="{{ $users->previousPageUrl() }}" tabindex="-1" aria-disabled="{{ $users->onFirstPage() ? 'true' : 'false' }}">
-                                        &laquo;
-                                    </a>
-                                </li>
-
-                                {{-- Pagination Elements --}}
-                                @for ($i = 1; $i <= $users->lastPage(); $i++)
-                                    <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ $users->url($i) }}">{{ $i }}</a>
+                                    {{-- Previous Page Link --}}
+                                    <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $users->previousPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" tabindex="-1" aria-disabled="{{ $users->onFirstPage() ? 'true' : 'false' }}">
+                                            &laquo;
+                                        </a>
                                     </li>
+
+                                    {{-- Pagination Elements --}}
+                                    @for ($i = 1; $i <= $users->lastPage(); $i++)
+                                        <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ $users->url($i) }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}">{{ $i }}</a>
+                                        </li>
                                     @endfor
 
                                     {{-- Next Page Link --}}
                                     <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
-                                        <a class="page-link" href="{{ $users->nextPageUrl() }}" aria-disabled="{{ $users->hasMorePages() ? 'false' : 'true' }}">
+                                        <a class="page-link" href="{{ $users->nextPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" aria-disabled="{{ $users->hasMorePages() ? 'false' : 'true' }}">
                                             &raquo;
                                         </a>
                                     </li>
-                                    @endif
+                                @endif
                             </ul>
                         </nav>
                     </div>
