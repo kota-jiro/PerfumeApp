@@ -52,7 +52,7 @@ class AdminProductController extends Controller
             'title' => 'required|string|max:255|unique:products,title',
             'category' => 'required|in:Male Perfume,Female Perfume',
             'description' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'stock_small' => 'nullable|integer|min:0',
             'stock_medium' => 'nullable|integer|min:0',
             'stock_large' => 'nullable|integer|min:0',
