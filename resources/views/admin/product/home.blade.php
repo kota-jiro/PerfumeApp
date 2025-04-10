@@ -140,7 +140,7 @@
                                 @if ($products->lastPage() > 1)
                                 {{-- Previous Page Link --}}
                                 <li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
-                                    <a class="page-link" href="{{ $products->previousPageUrl() }}" tabindex="-1" aria-disabled="{{ $products->onFirstPage() ? 'true' : 'false' }}">
+                                    <a class="page-link" href="{{ $products->previousPageUrl() }}{{ request()->has('category') ? '&category=' . request('category') : '' }}" tabindex="-1" aria-disabled="{{ $products->onFirstPage() ? 'true' : 'false' }}">
                                         &laquo;
                                     </a>
                                 </li>
@@ -148,13 +148,13 @@
                                 {{-- Pagination Elements --}}
                                 @for ($i = 1; $i <= $products->lastPage(); $i++)
                                     <li class="page-item {{ $i == $products->currentPage() ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ $products->url($i) }}">{{ $i }}</a>
+                                        <a class="page-link" href="{{ $products->url($i) }}{{ request()->has('category') ? '&category=' . request('category') : '' }}">{{ $i }}</a>
                                     </li>
                                     @endfor
 
                                     {{-- Next Page Link --}}
                                     <li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
-                                        <a class="page-link" href="{{ $products->nextPageUrl() }}" aria-disabled="{{ $products->hasMorePages() ? 'false' : 'true' }}">
+                                        <a class="page-link" href="{{ $products->nextPageUrl() }}{{ request()->has('category') ? '&category=' . request('category') : '' }}" aria-disabled="{{ $products->hasMorePages() ? 'false' : 'true' }}">
                                             &raquo;
                                         </a>
                                     </li>
