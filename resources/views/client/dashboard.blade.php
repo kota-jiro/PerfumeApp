@@ -47,9 +47,9 @@
                                         <div class="d-flex">
                                             <button class="btn btn-danger rounded-pill me-3 px-4 py-2 shadow-sm hover:shadow-lg">Place Order</button>
                                             <a href="{{ route('products.show', $product->id) }}"><button class="btn btn-outline-danger rounded-pill px-4 py-2 hover:bg-red-600 hover:text-white transition">View Details</button></a>
-                                           
+
                                         </div>
-                                    </div>
+                                    </div>  
                                 </div>
                             </div>
                             @endforeach
@@ -65,9 +65,9 @@
                         </button>
                     </div>
                     @else
-                        <div class="alert alert-info mt-4">
-                            No products found. Try adjusting your search.
-                        </div>
+                    <div class="alert alert-info mt-4">
+                        No products found. Try adjusting your search.
+                    </div>
                     @endif
 
                 </div>

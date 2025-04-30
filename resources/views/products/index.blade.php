@@ -42,7 +42,7 @@
                         </div>
                         @endif
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>
@@ -426,6 +426,9 @@
             if (savedCart) {
                 cart = JSON.parse(savedCart);
                 document.getElementById('cartCount').innerText = cart.length;
+            }
+            else {
+                cart = []; // Initialize an empty cart if none exists
             }
         });
     </script>
