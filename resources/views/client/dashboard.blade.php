@@ -28,32 +28,55 @@
                     </div>
 
                     <!-- Product Carousel -->
-                    @if($filteredProducts->isNotEmpty())
+                    @if($filteredProducts->count())
                     <div id="productCarousel" class="carousel slide mt-6" data-bs-ride="carousel" data-bs-interval="4000">
                         <div class="carousel-inner">
                             @foreach ($filteredProducts as $index => $product)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <div class="row align-items-center mb-5 border p-5 rounded-lg shadow-md" style="background-color: #fce9ea;">
+                                <div class="row align-items-center mb-4 border p-5 rounded-lg shadow-md" style="background-color: #fce9ea;">
                                     <div class="col-md-4 text-center">
                                         <img src="{{ asset('images/products/' . $product->image) }}"
                                             alt="{{ $product->title }}"
                                             class="img-fluid rounded-lg"
-                                            style="max-height: 300px; object-fit: cover;">
+                                            style="max-height: 210px; object-fit: cover;">
                                     </div>
                                     <div class="col-md-8">
                                         <h3 class="text-red-600 font-semibold text-3xl mb-2">{{ $product->title }}</h3>
                                         <p class="text-gray-700 text-md mb-4">{{ $product->description ?: 'No description available.' }}</p>
+                                        @if ($product->price_small)
                                         <h4 class="font-semibold text-gray-800 text-2xl mb-4">₱ {{ number_format($product->price_small, 2) }}</h4>
+                                        @elseif ($product->price_medium)
+                                        <h4 class="font-semibold text-gray-800 text-2xl mb-4">₱ {{ number_format($product->price_medium, 2) }}</h4>
+                                        @elseif ($product->price_large)
+                                        <h4 class="font-semibold text-gray-800 text-2xl mb-4">₱ {{ number_format($product->price_large, 2) }}</h4>
+                                        @else
+                                        <h4 class="font-semibold text-gray-500 text-md mb-4">Price not available</h4>
+
+                                        @endif
+
                                         <div class="d-flex">
                                             <button class="btn btn-danger rounded-pill me-3 px-4 py-2 shadow-sm hover:shadow-lg">Place Order</button>
                                             <a href="{{ route('products.show', $product->id) }}"><button class="btn btn-outline-danger rounded-pill px-4 py-2 hover:bg-red-600 hover:text-white transition">View Details</button></a>
 
                                         </div>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                             @endforeach
                         </div>
+
+                        <!-- Carousel Indicators -->
+                        <div class="d-flex justify-content-center">
+                            @foreach ($filteredProducts as $index => $product)
+                            <button type="button"
+                                data-bs-target="#productCarousel"
+                                data-bs-slide-to="{{ $index }}"
+                                class="carousel-indicator mx-1 rounded-circle border-0 {{ $index == 0 ? 'bg-danger' : 'bg-secondary' }}"
+                                style="width: 12px; height: 12px;">
+                            </button>
+                            @endforeach
+                        </div>
+
 
                         <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -74,4 +97,25 @@
             </div>
         </div>
     </div>
+    <script>
+        const carousel = document.getElementById('productCarousel');
+
+        carousel.addEventListener('slid.bs.carousel', function() {
+            const activeIndex = Array.from(carousel.querySelectorAll('.carousel-item')).findIndex(item =>
+                item.classList.contains('active')
+            );
+
+            document.querySelectorAll('.carousel-indicator').forEach((btn, index) => {
+                if (index === activeIndex) {
+                    btn.classList.remove('bg-secondary');
+                    btn.classList.add('bg-danger');
+                } else {
+                    btn.classList.remove('bg-danger');
+                    btn.classList.add('bg-secondary');
+                }
+            });
+        });
+    </script>
+
+
 </x-app-layout>
