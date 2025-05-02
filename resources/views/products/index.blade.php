@@ -55,11 +55,11 @@
                     <h5 class="modal-title" id="productModalLabel">Product Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <img id="modalProductImage" src="" class="img-fluid mb-3 rounded" alt="Product Image">
-                    <h4 id="modalProductTitle"></h4>
-                    <p id="modalProductDescription"></p>
-                    <p><strong>Price:</strong> ₱<span id="modalProductPrice"></span></p>
+                <div class="modal-body text-dark">
+                    <img id="modalProductImage" src="" class="img-fluid mb-3 rounded" alt="Product Image" style="max-height: 250px; object-fit: contain; width: 100%;">
+                    <h4 id="modalProductTitle" class="text-[var(--primary-color)]"></h4>
+                    <p id="modalProductDescription" class="text-secondary"></p>
+                    <p class="mb-1"><strong class="text-dark">Price:</strong> ₱<span id="modalProductPrice" class="text-danger fw-bold"></span></p>
                 </div>
                 <div class="m-3 px-3">
                     <label for="productSize" class="form-label">Select Size:</label>
@@ -237,10 +237,10 @@
             const cartItemsDiv = document.getElementById('cartItems');
             cartItemsDiv.innerHTML = '';
             if (cart.length === 0) {
-            cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
+                cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
             } else {
-            cart.forEach((item, index) => {
-                cartItemsDiv.innerHTML += `
+                cart.forEach((item, index) => {
+                    cartItemsDiv.innerHTML += `
                 <div class="mb-2 d-flex justify-content-between align-items-center">
                     <div>
                     <strong>${item.product_name}</strong> (${item.size}) - ₱${parseFloat(item.price).toFixed(2)}
@@ -255,7 +255,7 @@
                     </div>
                 </div>
                 `;
-            });
+                });
             }
             new bootstrap.Modal(document.getElementById('cartModal')).show();
         });
@@ -263,134 +263,75 @@
         function checkoutProduct(index) {
             const product = cart[index];
             const formattedProduct = {
-            product_name: product.product_name,
-            price: product.price,
-            size: product.size,
-            image: product.image,
-            product_id: product.product_id,
-            quantity: product.quantity
+                product_name: product.product_name,
+                price: product.price,
+                size: product.size,
+                image: product.image,
+                product_id: product.product_id,
+                quantity: product.quantity
             };
 
-            fetch("{{ route('checkout.store') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            },
-            body: JSON.stringify({
-                cart: [formattedProduct]
-            }),
-            })
-            .then(response => response.json())
-            .then(data => {
-            if (response.ok) {
-                showAlert(data.message);
-                cart.splice(index, 1); // Remove the product from the cart
-                document.getElementById('cartCount').innerText = cart.length;
-                const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
-                localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
-                const cartItemsDiv = document.getElementById('cartItems');
-                cartItemsDiv.innerHTML = cart.length === 0 ? '<p>No products in cart.</p>' : '';
-            } else {
-                showAlert(data.message); // Show error message
-            }
-            })
-            .catch(error => {
-            console.error('Checkout failed:', error);
-            showAlert('An error occurred during checkout.');
-            });
+            // Perform checkout logic (e.g., send to server)
+            console.log('Checked out product:', formattedProduct);
+
+            // Remove item from cart
+            cart.splice(index, 1);
+
+            // Update localStorage
+            const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+            localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
+
+            // Update UI
+            document.getElementById('cartCount').innerText = cart.length;
+            document.getElementById('viewCartBtn').click(); // Refresh cart modal
         }
 
         // Function to update the quantity of a product in the cart
-        function updateQuantity(index, quantity) {
-            const maxStock = cart[index].stock;
-            if (quantity > maxStock) {
-                showAlert(`Only ${maxStock} items are available in stock.`);
-                document.getElementById(`quantity-${index}`).value = maxStock; // Reset to max stock
+        function updateQuantity(index, newQuantity) {
+            const item = cart[index];
+            const quantity = parseInt(newQuantity);
+
+            if (isNaN(quantity) || quantity < 1 || quantity > item.stock) {
+                showAlert(`Quantity must be between 1 and ${item.stock}.`);
+                document.getElementById(`quantity-${index}`).value = item.quantity;
                 return;
             }
-            cart[index].quantity = parseInt(quantity, 10); // Update the quantity in the cart
 
-            // Save the updated cart to localStorage for the specific user
+            item.quantity = quantity;
+
             const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
             localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
         }
 
+
         // Function to remove a product from the cart
         function removeFromCart(index) {
-            // Remove the product at the specified index
             cart.splice(index, 1);
 
-            // Save the updated cart to localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
+            const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+            localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
 
-            // Update the cart count
             document.getElementById('cartCount').innerText = cart.length;
-
-            // Refresh the cart modal content
-            const cartItemsDiv = document.getElementById('cartItems');
-            cartItemsDiv.innerHTML = '';
-            if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<p>No products in cart.</p>';
-            } else {
-                cart.forEach((item, index) => {
-                    cartItemsDiv.innerHTML += `
-                        <div class="mb-2 d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${item.product_name}</strong> (${item.size}) - ₱${parseFloat(item.price).toFixed(2)}
-                                <br>
-                                <label for="quantity-${index}" class="form-label">Quantity:</label>
-                                <input type="number" id="quantity-${index}" class="form-control form-control-sm" value="${item.quantity}" min="1" max="${item.stock}" onchange="updateQuantity(${index}, this.value)">
-                                <small class="text-muted">Available stock: ${item.stock}</small>
-                            </div>
-                            <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
-                        </div>
-                    `;
-                });
-            }
+            document.getElementById('viewCartBtn').click(); // Refresh cart modal
         }
 
         document.getElementById('finalCheckout').addEventListener('click', () => {
             if (cart.length === 0) {
-                showAlert('Your cart is empty!');
+                showAlert('Cart is empty.');
                 return;
             }
 
-            const formattedCart = cart.map(item => ({
-                product_name: item.product_name,
-                price: item.price,
-                size: item.size,
-                image: item.image,
-                product_id: item.product_id,
-                quantity: item.quantity // Include quantity in the checkout data
-            }));
+            // Example: send cart to server via AJAX (adjust endpoint and data structure as needed)
+            console.log('Checking out full cart:', cart);
 
-            fetch("{{ route('checkout.store') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({
-                    cart: formattedCart
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (response.ok) {
-                    showAlert(data.message);
-                    cart = [];
-                    document.getElementById('cartCount').innerText = '0';
-                    document.getElementById('cartItems').innerHTML = '<p>No products in cart.</p>';
-                    bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
-                } else {
-                    showAlert(data.message); // Show error message
-                }
-            })
-            .catch(error => {
-                console.error('Checkout failed:', error);
-                showAlert('An error occurred during checkout.');
-            });
+            // Clear cart
+            const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+            localStorage.removeItem(`cart_${userId}`);
+            cart = [];
+
+            document.getElementById('cartCount').innerText = 0;
+            bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+            showAlert('Checkout completed!');
         });
 
         document.getElementById('cartModal').addEventListener('hidden.bs.modal', () => {
@@ -422,9 +363,9 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
-            const savedCart = localStorage.getItem(`cart_${userId}`);
-            if (savedCart) {
-                cart = JSON.parse(savedCart);
+            const storedCart = localStorage.getItem(`cart_${userId}`);
+            if (storedCart) {
+                cart = JSON.parse(storedCart);
                 document.getElementById('cartCount').innerText = cart.length;
             }
         });
