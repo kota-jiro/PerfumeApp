@@ -22,24 +22,20 @@
             <!-- Right Side: User Details -->
             <div class="col-md-8">
                 <div class="profile-details bg-light p-4 rounded shadow-sm">
-                    <div class="row mb-4">
+                    <div class="row p-3">
                         <div class="col-md-6">
-                            <h5 class="text-secondary">Email:</h5>
-                            <p class="text-dark">{{ Auth::user()->email }}</p>
+                            <h5 class="text-secondary">Email: {{ Auth::user()->email }}</h5>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="text-secondary">Phone:</h5>
-                            <p class="text-dark">{{ Auth::user()->phone ?? 'Not provided' }}</p>
+                            <h5 class="text-secondary">Phone: {{ Auth::user()->phone ?? 'Not provided' }}</h5>
                         </div>
                     </div>
-                    <div class="row mb-4">
+                    <div class="row p-3">
                         <div class="col-md-6">
-                            <h5 class="text-secondary">Address:</h5>
-                            <p class="text-dark">{{ Auth::user()->address ?? 'Not provided' }}</p>
+                            <h5 class="text-secondary">Address: {{ Auth::user()->address ?? 'Not provided' }}</h5>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="text-secondary">Joined On:</h5>
-                            <p class="text-dark">{{ Auth::user()->created_at->format('F d, Y') }}</p>
+                            <h5 class="text-secondary">Joined On: {{ Auth::user()->created_at->format('F d, Y') }}</h5>
                         </div>
                     </div>
                 </div>

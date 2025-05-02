@@ -24,7 +24,8 @@ class DashboardController extends Controller
             ->orWhere('category', 'LIKE', '%' . $search . '%')
             ->orWhere('description', 'LIKE', '%' . $search . '%')
             ->orderBy('id', 'asc')
-            ->get();
+            ->paginate(perPage: 10);
+
 
         $user = Auth::user();
         $maleCount = Product::where('category', 'Male Perfume')->count();
