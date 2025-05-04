@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\Order\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Product\AdminProductController;
 use App\Http\Controllers\Product\DashboardController;
 use App\Http\Controllers\Product\ProductController;
@@ -30,11 +31,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/filter', [ProductController::class, 'filterByCategory'])->name('products.filter');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
-    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
-
     // Cart Page
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/cart/create', [CartController::class, 'create'])->name('cart.create');
+    Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
+    Route::get('/cart/edit/{cart}', [CartController::class, 'edit'])->name('cart.edit');
+    Route::put('/cart/update/{cart}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/delete/{cart}', [CartController::class, 'destroy'])->name('cart.delete');
+    
+    Route::post('/checkout/{id}', [OrderController::class, 'checkout'])->name('checkout.product');
+    Route::post('/checkout-all', [OrderController::class, 'checkoutAll'])->name('checkout.all');
 
+    Route::get('/orders', [ClientOrderController::class, 'index'])->name('client.orders.index');
+    Route::get('/orders/{id}', [ClientOrderController::class, 'show'])->name('orders.show');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {

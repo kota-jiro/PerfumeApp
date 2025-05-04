@@ -7,6 +7,11 @@
 
     <div class="py-12">
         <div class="max-w-7x1 mx-auto sm:px lg:px-8">
+        <div class="mb-4">
+                <a href="{{ route('admin.products') }}" class="text-gray-500 hover:underline">
+                    &larr; Back
+                </a>
+            </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="d-flex align-items-center justify-content-between">
@@ -18,12 +23,11 @@
                         {{ session('error') }}
                     </div>
                     @endif
-                    <p><a href="{{ route('admin.products') }}" class="btn btn-primary">Going back to the corner</a></p>
                     <form action="{{ route('admin.products.save') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="title" class="form-label">Product Name</label>
+                                <label for="title" class="form-label">Product Name:</label>
                                 <input type="text" name="title" class="form-control" value="{{ old('title') }}" placeholder="Product Name" />
                                 @error('title')
                                 <span class="text-danger">{{ $message }}</span>
@@ -33,7 +37,7 @@
 
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="category" class="form-label">Category</label>
+                                <label for="category" class="form-label">Category:</label>
                                 <select name="category" class="form-control" ">
                                     <option value="">Select Category</option>
                                     <option value=" Male Perfume">Male Perfume</option>
@@ -47,7 +51,7 @@
 
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label">Description:</label>
                                 <textarea type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="Description" ></textarea>
                                 @error('description')
                                 <span class="text-danger">{{ $message }}</span>
@@ -75,6 +79,9 @@
                             </div>
                         </div>
                         <hr>
+                        <div class="row mb-3">
+                            <label>Add Stock/s:</label>
+                        </div>
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="stock_small">Small (10ml - 20ml)</label>
@@ -116,7 +123,7 @@
 
                         <div class="row">
                             <div class="d-grid">
-                                <button class="btn btn-primary">Submit</button>
+                                <button class="btn btn-danger">Submit</button>
                             </div>
                         </div>
                     </form>
