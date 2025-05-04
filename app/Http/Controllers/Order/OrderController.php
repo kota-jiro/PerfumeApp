@@ -32,8 +32,9 @@ class OrderController extends Controller
 
         $orders = $ordersQuery->paginate(perPage: 2); // Paginate the filtered orders
 
+       
         // Calculate totals dynamically based on the selected filter
-        if ($statusFilter) {
+        if ($userFilter) {
             $totalPending = $statusFilter === 'Pending' ? $ordersQuery->count() : 0;
             $totalProcessing = $statusFilter === 'Processing' ? $ordersQuery->count() : 0;
             $totalCompleted = $statusFilter === 'Completed' ? $ordersQuery->count() : 0;
