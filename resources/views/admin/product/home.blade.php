@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900 d-flex flex-column" style="min-height: 570px; display: flex; justify-content: space-between;">
                     <div class="d-flex align-items-center justify-content-between">
                         <h1 class="mb-0">List Products</h1>
-                        <a href="{{ route('admin.products.create') }}" class="btn btn-primary">+ Add Product</a>
+                        <a href="{{ route('admin.products.create') }}" class="btn btn-outline-danger">+ Add Product</a>
                     </div>
                     <hr />
                     <div class="mb-3">

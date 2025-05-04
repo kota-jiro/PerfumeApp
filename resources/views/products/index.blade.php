@@ -31,7 +31,7 @@
                             @foreach ($filteredProducts as $product)
                             <div class="col">
                                 <div class="card h-100 shadow-md border-0 rounded-lg product-card" data-product='@json($product)'>
-                                    <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->title }}" class="card-img-top rounded-lg" style="height: 200px; object-fit: cover;">
+                                    <img src="{{ asset("images/products/{$product->image}") }}" alt="{{ $product->title }}" class="card-img-top rounded-lg" style="height: 200px; object-fit: cover;">
                                     <div class="card-body">
                                         <h5 class="card-title text-[var(--primary-color)]">{{ $product->title }}</h5>
                                         <p class="card-text text-gray-700" style="height: 75px; overflow: hidden; text-overflow: ellipsis;" title="{{ $product->description }}">{{ \Str::limit($product->description, 50, '...') }}</p>
@@ -63,7 +63,9 @@
                 </div>
                 <div class="m-3 px-3">
                     <label for="productSize" class="form-label">Select Size:</label>
-                    <select id="productSize" class="form-select"></select>
+                    <select id="productSize" class="form-select">
+                        <!-- Options will be dynamically populated -->
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline-danger" id="addToCartBtn">Add to Cart</button>
@@ -75,7 +77,7 @@
 
     <!-- Cart Section -->
     <div class="fixed-bottom p-4 d-flex justify-content-end">
-        <button class="btn btn-dark rounded-pill px-4" id="viewCartBtn">View Cart (<span id="cartCount">0</span>)</button>
+        <button class="btn btn-dark rounded-pill px-4" id="viewCartBtn" hidden>View Cart (<span id="cartCount">0</span>)</button>
     </div>
 
     <!-- Cart Modal -->
@@ -135,15 +137,23 @@
                     <option value="large" ${product.stock_large <= 0 ? 'disabled' : ''}>Large - ₱${parseFloat(product.price_large).toFixed(2)}</option>
                 `;
 
-                // Set initial price
-                document.getElementById('modalProductPrice').innerText = parseFloat(product.price_small).toFixed(2);
+                // Set initial price based on stock availability
+                if (product.stock_large > 0) {
+                    sizeSelect.value = 'large';
+                    document.getElementById('modalProductPrice').innerText = parseFloat(product.price_large).toFixed(2);
+                } else if (product.stock_medium > 0) {
+                    sizeSelect.value = 'medium';
+                    document.getElementById('modalProductPrice').innerText = parseFloat(product.price_medium).toFixed(2);
+                } else if (product.stock_small > 0) {
+                    sizeSelect.value = 'small';
+                    document.getElementById('modalProductPrice').innerText = parseFloat(product.price_small).toFixed(2);
+                }
 
                 // Show modal
                 new bootstrap.Modal(document.getElementById('productModal')).show();
             });
         });
 
-        // Update price when size changes
         document.getElementById('productSize').addEventListener('change', (e) => {
             const selectedSize = e.target.value;
             let price = 0;
@@ -163,12 +173,22 @@
             document.getElementById('modalProductPrice').innerText = parseFloat(price).toFixed(2);
         });
 
-        function showAlert(message) {
-            document.getElementById('alertModalMessage').innerText = message;
-            new bootstrap.Modal(document.getElementById('alertModal')).show();
-        }
+        // Set default size and price based on stock availability
+        document.addEventListener('DOMContentLoaded', () => {
+            const sizeSelect = document.getElementById('productSize');
+            if (selectedProduct.stock_large > 0) {
+                sizeSelect.value = 'large';
+                document.getElementById('modalProductPrice').innerText = parseFloat(selectedProduct.price_large).toFixed(2);
+            } else if (selectedProduct.stock_medium > 0) {
+                sizeSelect.value = 'medium';
+                document.getElementById('modalProductPrice').innerText = parseFloat(selectedProduct.price_medium).toFixed(2);
+            } else if (selectedProduct.stock_small > 0) {
+                sizeSelect.value = 'small';
+                document.getElementById('modalProductPrice').innerText = parseFloat(selectedProduct.price_small).toFixed(2);
+            }
+        });
 
-        document.getElementById('addToCartBtn').addEventListener('click', () => {
+        document.getElementById('addToCartBtn').addEventListener('click', async () => {
             if (selectedProduct) {
                 const selectedSize = document.getElementById('productSize').value;
 
@@ -230,6 +250,35 @@
                 // Update cart count and close modal
                 document.getElementById('cartCount').innerText = cart.length;
                 bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+            }
+            const selectedSize = document.getElementById('productSize').value;
+            const token = '{{ csrf_token() }}';
+
+            try {
+                const response = await fetch("{{ route('cart.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        product_id: selectedProduct.id,
+                        size: selectedSize
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('alertModalMessage').innerText = result.message;
+                    new bootstrap.Modal(document.getElementById('alertModal')).show();
+                } else {
+                    throw new Error(result.message || 'Error adding to cart.');
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('alertModalMessage').innerText = 'Something went wrong.';
+                new bootstrap.Modal(document.getElementById('alertModal')).show();
             }
         });
 

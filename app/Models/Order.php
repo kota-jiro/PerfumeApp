@@ -12,15 +12,11 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'product_id',
-        'product_name',
-        'price',
         'size',
-        'image',
+        'quantity',
+        'price',
         'status',
-    ];
-
-    protected $casts = [
-        'products' => 'array',
+        'total_price',
     ];
 
     public function user()
