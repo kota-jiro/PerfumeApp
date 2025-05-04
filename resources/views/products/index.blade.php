@@ -76,9 +76,9 @@
     </div>
 
     <!-- Cart Section -->
-    <!-- <div class="fixed-bottom p-4 d-flex justify-content-end">
-        <button class="btn btn-dark rounded-pill px-4" id="viewCartBtn">View Cart (<span id="cartCount">0</span>)</button>
-    </div> -->
+    <div class="fixed-bottom p-4 d-flex justify-content-end">
+        <button class="btn btn-dark rounded-pill px-4" id="viewCartBtn" hidden>View Cart (<span id="cartCount">0</span>)</button>
+    </div>
 
     <!-- Cart Modal -->
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
