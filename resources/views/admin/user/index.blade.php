@@ -83,8 +83,8 @@
                                 <th>Email</th>
                                 <th>Phone #</th>
                                 <th>Address</th>
-                                <th>Created At</th>
-                                <th>Updated At</th>
+                                <!-- <th>Created At</th>
+                                <th>Updated At</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -92,22 +92,22 @@
                         <tbody>
                             @forelse ($users as $user)
                             <tr>
-                                <td class="align-middle">{{ $loop->iteration }}</td>
-                                <td class="align-middle">
+                                <td class="align-middle clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $users->firstItem() + $loop->index }}</td>
+                                <td class="align-middle clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">
                                     <img src="{{ asset('images/users/' . ($user->image ?? 'default.jpg')) }}" alt="Profile" width="50" height="50" style="min-height: 89px;" class="rounded-circle object-fit-cover">
                                 </td>
-                                <td class="align-middle user-name">{{ $user->firstname }} {{ $user->lastname }}</td>
+                                <td class="align-middle user-name clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $user->firstname }} {{ $user->lastname }}</td>
                                 <td class="align-middle">
                                     <select class="form-select userTypeChange" style="width: 100px;" data-user-id="{{ $user->id }}">
                                         <option value="user" {{ $user->usertype == 'user' ? 'selected' : '' }}>User</option>
                                         <option value="admin" {{ $user->usertype == 'admin' ? 'selected' : '' }}>Admin</option>
                                     </select>
                                 </td>
-                                <td class="align-middle">{{ $user->email }}</td>
-                                <td class="align-middle">{{ $user->phone ?? '-----'  }}</td>
-                                <td class="align-middle">{{ $user->address ?? '-----' }}</td>
-                                <td class="align-middle">{{ $user->created_at}}</td>
-                                <td class="align-middle">{{ $user->updated_at }}</td>
+                                <td class="align-middle clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $user->email }}</td>
+                                <td class="align-middle clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">+63 {{ $user->phone ?? '-----'  }}</td>
+                                <td class="align-middle clickable-row" data-user="{{ json_encode($user) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $user->address ?? '-----' }}</td>
+                                <!-- <td class="align-middle">{{ $user->created_at}}</td>
+                                <td class="align-middle">{{ $user->updated_at }}</td> -->
                                 <td class="align-middle">
                                     <!-- Delete User Button (Triggers Modal) -->
                                     <div class="btn-group" role="group" aria-label="Basic example">
@@ -155,21 +155,21 @@
 
                     <!-- Pagination Section -->
                     <div class="d-flex justify-content-center mt-1">
-                        <nav aria-label="Page navigation">
+                        <div aria-label="Page navigation">
                             <ul class="pagination pagination-sm">
                                 @if ($users->lastPage() > 1)
-                                    {{-- Previous Page Link --}}
-                                    <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
-                                        <a class="page-link" href="{{ $users->previousPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" tabindex="-1" aria-disabled="{{ $users->onFirstPage() ? 'true' : 'false' }}">
-                                            &laquo;
-                                        </a>
-                                    </li>
+                                {{-- Previous Page Link --}}
+                                <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $users->previousPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" tabindex="-1" aria-disabled="{{ $users->onFirstPage() ? 'true' : 'false' }}">
+                                        &laquo;
+                                    </a>
+                                </li>
 
-                                    {{-- Pagination Elements --}}
-                                    @for ($i = 1; $i <= $users->lastPage(); $i++)
-                                        <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
-                                            <a class="page-link" href="{{ $users->url($i) }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}">{{ $i }}</a>
-                                        </li>
+                                {{-- Pagination Elements --}}
+                                @for ($i = 1; $i <= $users->lastPage(); $i++)
+                                    <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $users->url($i) }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}">{{ $i }}</a>
+                                    </li>
                                     @endfor
 
                                     {{-- Next Page Link --}}
@@ -178,9 +178,9 @@
                                             &raquo;
                                         </a>
                                     </li>
-                                @endif
+                                    @endif
                             </ul>
-                        </nav>
+                        </>
                     </div>
 
                 </div>
@@ -205,7 +205,55 @@
             </div>
         </div>
     </div>
+    <!-- Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img id="modalProfileImage" src="" alt="Profile" class="img-fluid rounded-circle">
+                        </div>
+                        <div class="col-md-8">
+                            <p class="text-gray-900"><strong>Name:</strong> <span id="modalName"></span></p>
+                            <p class="text-gray-900"><strong>User Type:</strong> <span id="modalUserType"></span></p>
+                            <p class="text-gray-900"><strong>Email:</strong> <span id="modalEmail"></span></p>
+                            <p class="text-gray-900"><strong>Phone:</strong> <span id="modalPhone"></span></p>
+                            <p class="text-gray-900"><strong>Address:</strong> <span id="modalAddress"></span></p>
+                            <p class="text-gray-900"><strong>Created At:</strong> <span id="modalCreatedAt"></span></p>
+                            <p class="text-gray-900"><strong>Updated At:</strong> <span id="modalUpdatedAt"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".clickable-row").forEach(function(row) {
+                row.addEventListener("click", function() {
+                    const user = JSON.parse(this.getAttribute("data-user"));
+
+                    document.getElementById("modalProfileImage").src = user.image ? `{{ asset('images/users/') }}/${user.image}` : `{{ asset('images/users/default.jpg') }}`;
+                    document.getElementById("modalName").innerText = `${user.firstname} ${user.lastname}`;
+                    document.getElementById("modalUserType").innerText = user.usertype.charAt(0).toUpperCase() + user.usertype.slice(1);
+                    document.getElementById("modalEmail").innerText = user.email;
+                    document.getElementById("modalPhone").innerText = user.phone ? `+63 ${user.phone}` : '-----';
+                    document.getElementById("modalAddress").innerText = user.address ?? '-----';
+                    document.getElementById("modalCreatedAt").innerText = user.created_at ? new Date(user.created_at).toLocaleString() : 'N/A';
+                    document.getElementById("modalUpdatedAt").innerText = user.updated_at ? new Date(user.updated_at).toLocaleString() : 'N/A';
+                });
+            });
+        });
+
         let selectedUserId = null;
         let selectedUserType = null;
 
@@ -263,6 +311,9 @@
         });
     </script>
     <style>
+        /* nav {
+            background-color: transparent;
+        } */
         .pagination .page-item .page-link {
             color: #800000;
             /* Leo’s Perfume brand red */
@@ -292,6 +343,15 @@
         .pagination .page-item .page-link:hover {
             background-color: #f8d7da;
             color: #800000;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:hover {
+            background-color: #f8f9fa;
+            /* Light gray background on hover */
         }
     </style>
 

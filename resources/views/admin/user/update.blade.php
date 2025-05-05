@@ -7,11 +7,15 @@
 
     <div class="py-12">
         <div class="max-w-7x1 mx-auto sm:px lg:px-8">
+            <div class="mb-4">
+                <a href="{{ route('admin.users') }}" class="text-gray-500 hover:underline">
+                    &larr; Back
+                </a>
+            </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h1 class="mb-0">Edit User</h1>
                     <hr />
-                    <p><a href="{{ route('admin.users') }}" class="btn btn-primary">Going back to the corner</a></p>
                     <form action="{{ route('admin.users.update', $users->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
