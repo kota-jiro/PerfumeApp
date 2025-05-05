@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7x1 mx-auto sm:px lg:px-8">
-        <div class="mb-4">
+            <div class="mb-4">
                 <a href="{{ route('admin.products') }}" class="text-gray-500 hover:underline">
                     &larr; Back
                 </a>
@@ -52,7 +52,7 @@
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="description" class="form-label">Description:</label>
-                                <textarea type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="Description" ></textarea>
+                                <textarea type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="Description"></textarea>
                                 @error('description')
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror

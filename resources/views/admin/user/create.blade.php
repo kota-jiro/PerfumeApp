@@ -7,6 +7,11 @@
 
     <div class="py-12">
         <div class="max-w-7x1 mx-auto sm:px lg:px-8">
+            <div class="mb-4">
+                <a href="{{ route('admin.products') }}" class="text-gray-500 hover:underline">
+                    &larr; Back
+                </a>
+            </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h1 class="mb-0">Add User</h1>
@@ -19,7 +24,6 @@
                             @endforeach
                     </div>
                     @endif
-                    <p><a href="{{ route('admin.users') }}" class="btn btn-primary">Going back to the corner</a></p>
                     <form action="{{ route('admin.users.save') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row mb-3">
@@ -109,7 +113,7 @@
 
                         <div class="row">
                             <div class="d-grid">
-                                <button class="btn btn-primary">Submit</button>
+                                <button class="btn btn-danger">Submit</button>
                             </div>
                         </div>
                     </form>

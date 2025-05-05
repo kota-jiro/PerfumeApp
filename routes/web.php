@@ -8,6 +8,7 @@ use App\Http\Controllers\Product\AdminProductController;
 use App\Http\Controllers\Product\DashboardController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Transaction\TransactionController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,7 +44,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout-all', [OrderController::class, 'checkoutAll'])->name('checkout.all');
 
     Route::get('/orders', [ClientOrderController::class, 'index'])->name('client.orders.index');
+    Route::put('/orders/updateStatus/{order}', [ClientOrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::get('/orders/{id}', [ClientOrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/updatePaymentMethod/{order}', [ClientOrderController::class, 'updatePaymentMethod'])->name('orders.updatePaymentMethod');
+
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('client.transaction.index');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {

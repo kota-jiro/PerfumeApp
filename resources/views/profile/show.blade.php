@@ -44,7 +44,7 @@
 
         <!-- Bottom: Update Profile Button -->
         <div class="text-center mt-4">
-            <x-dropdown-link :href="route('profile.edit')" class="btn btn-outline-danger">
+            <x-dropdown-link :href="route('profile.edit')" class="btn btn-outline-danger text-center">
                 Update Profile
             </x-dropdown-link>
         </div>

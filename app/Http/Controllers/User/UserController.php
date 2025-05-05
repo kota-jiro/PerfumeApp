@@ -49,7 +49,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'phone' => ['nullable', 'string', 'max:11'],
+            'phone' => ['nullable', 'string', 'max:9'],
             'address' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -100,7 +100,7 @@ class UserController extends Controller
             'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $id],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validate image
-            'phone' => ['nullable', 'string', 'max:11'],
+            'phone' => ['nullable', 'string', 'max:9'],
             'address' => ['nullable', 'string', 'max:255'],
         ]);
         // Handle image upload

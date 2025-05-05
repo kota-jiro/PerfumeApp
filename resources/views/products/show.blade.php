@@ -1,12 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-[var(--primary-color)] leading-tight text-center">
+        <h2 class="font-semibold text-xl text-[var(--primary-color)] leading-tight">
             {{ $product->title }}
         </h2>
     </x-slot>
 
     <div class="py-6 bg-light">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="mb-4">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 hover:underline">
+                    &larr; Back
+                </a>
+            </div>
             <div class="bg-white shadow-md rounded-lg overflow-hidden p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Image Section -->
@@ -43,9 +48,9 @@
 
                         <div class="flex justify-center gap-4 mt-6">
                             @if ($product->stock_small > 0 || $product->stock_medium > 0 || $product->stock_large > 0)
-                                <button class="btn btn-danger rounded-pill px-5 py-2">Place Order</button>
+                            <button class="btn btn-danger rounded-pill px-5 py-2" style="pointer: none; cursor: not-allowed;">Place Order</button>
                             @else
-                                <span class="text-red-600 font-semibold">This product is currently out of stock.</span>
+                            <span class="text-red-600 font-semibold">This product is currently out of stock.</span>
                             @endif
 
                             <a href="{{ route('dashboard', ['category' => 'All']) }}" class="btn btn-outline-danger rounded-pill px-5 py-2">

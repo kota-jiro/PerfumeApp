@@ -27,6 +27,7 @@
                 }, 3000);
             });
         </script>
+        
         <div class="mb-4">
             <a href="{{ route('products.index') }}" class="text-gray-500 hover:underline">
                 &larr; Back
@@ -54,7 +55,7 @@
                             @csrf
                             @method('PUT')
                             <div class="input-group">
-                                <input type="number" name="quantity" value="{{ $cart->quantity }}" min="1" max="{{ $cart->product->stock }}" class="form-control" style="width: 80px;">
+                                <input type="number" name="quantity" value="{{ $cart->quantity }}" min="1" max="{{ $cart->size === 'small' ? $cart->product->stock_small : ($cart->size === 'medium' ? $cart->product->stock_medium : ($cart->size === 'large' ? $cart->product->stock_large : 0)) }}" class="form-control" style="width: 80px;" oninput="this.setCustomValidity('');" oninvalid="this.setCustomValidity('Caution: The available stock is {{ $cart->size === 'small' ? $cart->product->stock_small : ($cart->size === 'medium' ? $cart->product->stock_medium : ($cart->size === 'large' ? $cart->product->stock_large : 0)) }}.')">
                                 <button class="btn btn-primary btn-sm">Update</button>
                             </div>
                         </form>
@@ -72,7 +73,7 @@
                                 @endif
                             </small>
                             <small>
-                                Total: ₱{{ number_format($cart->price + ($cart->size === 'small' ? 300 : ($cart->size === 'medium' ? 500 : ($cart->size === 'large' ? 800 : 0))) * $cart->quantity, 2) }}
+                                Total: ₱{{ number_format(($cart->price + ($cart->size === 'small' ? 300 : ($cart->size === 'medium' ? 500 : ($cart->size === 'large' ? 800 : 0)))) * $cart->quantity, 2) }}
                             </small>
                         </div>
                         <div class="mt-auto">
@@ -157,14 +158,26 @@
                 </div>
                 <div class="modal-body">
                     <h6>Payment Method</h6>
-                    <p class="text-black">Currently, only <strong>Cash on Delivery (COD)</strong> is available.</p>
-                    Are you sure you want to checkout <span id="checkoutProductTitle" class="fw-bold text-black"></span>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <p class="text-black">Please select a payment method:</p>
                     <form id="checkoutForm" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-success">Yes, Checkout</button>
+                        <select class="form-select mb-3" name="payment_method" id="payment_method">
+                            <option value="COD" selected>Cash on Delivery (COD)</option>
+                            <option value="Pick-Up" disabled>Pick-Up</option>
+                            <option value="Credit Card" disabled>Credit Card</option>
+                            <option value="Debit Card" disabled>Debit Card</option>
+                            <option value="Gcash" disabled>Gcash</option>
+                        </select>
+                        <small>Cash on Delivery is available for now.</small>
+                        <p class="text-black">
+                            <strong>Note:</strong> The total amount will be calculated based on the selected size and quantity. No returns or exchanges are allowed after checkout.
+                            <br>
+                        </p>
+                        Are you sure you want to checkout <span id="checkoutProductTitle" class="fw-bold text-black"></span>?
+                        <div class="modal-footer mt-3">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">Yes, Checkout</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -181,14 +194,26 @@
                 </div>
                 <div class="modal-body">
                     <h6>Payment Method</h6>
-                    <p class="text-black">Currently, only <strong>Cash on Delivery (COD)</strong> is available.</p>
-                    Are you sure you want to checkout all items in your cart?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <p class="text-black">Please select a payment method:</p>
                     <form id="checkoutAllForm" action="{{ route('checkout.all') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-success">Yes, Checkout All</button>
+                        <select class="form-select mb-3" name="payment_method_all" id="payment_method_all">
+                            <option value="COD" selected>Cash on Delivery (COD)</option>
+                            <option value="Pick-Up" disabled>Pick-Up</option>
+                            <option value="Credit Card" disabled>Credit Card</option>
+                            <option value="Debit Card" disabled>Debit Card</option>
+                            <option value="Gcash" disabled>Gcash</option>
+                        </select>
+                        <small>Cash on Delivery is available for now.</small>
+                        <p class="text-black">
+                            <strong>Note:</strong> The total amount will be calculated based on the selected size and quantity. No returns or exchanges are allowed after checkout.
+                            <br>
+                        </p>
+                        Are you sure you want to checkout all items in your cart?
+                        <div class="modal-footer mt-3">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">Yes, Checkout All</button>
+                        </div>
                     </form>
                 </div>
             </div>

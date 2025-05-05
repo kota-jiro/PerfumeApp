@@ -20,6 +20,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->string('status')->default('Pending'); // e.g. Pending, Completed, Cancelled
             $table->decimal('total_price', 10, 2);
+            $table->string('payment_method'); // e.g. Cash, Credit Card
+            $table->string('address');
+            $table->string('phone');
             $table->timestamps();
         });
     }
