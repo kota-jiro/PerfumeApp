@@ -15,38 +15,41 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::where('usertype', 'user')->get(); // Get all users with usertype 'user' for the filter
-        $userFilter = Auth::check() && Auth::user()->usertype === 'user' ? Auth::id() : $request->input('user_id'); // Automatically filter by logged-in user if usertype is 'user'
-        $statusFilter = $request->has('status') ? $request->input('status') : null; // Get the selected status from the request, default to null if not provided
+        $users = User::where('usertype', 'user')->get();
 
-        // Build the query for filtering orders
+        $userFilter = Auth::check() && Auth::user()->usertype === 'user'
+            ? Auth::id()
+            : $request->input('user_id');
+
+        $statusFilter = $request->input('status');
+
+        // Build base query
         $ordersQuery = Order::with('user', 'product');
 
         if ($userFilter) {
-            $ordersQuery->where('user_id', $userFilter); // Filter orders by the selected user
+            $ordersQuery->where('user_id', $userFilter);
         }
 
         if ($statusFilter) {
-            $ordersQuery->where('status', $statusFilter); // Filter orders by the selected status
+            $ordersQuery->where('status', $statusFilter);
         }
 
-        $orders = $ordersQuery->paginate(perPage: 2); // Paginate the filtered orders
+        // Clone query for totals (before pagination)
+        $totalsQuery = clone $ordersQuery;
 
-       
-        // Calculate totals dynamically based on the selected filter
-        if ($userFilter) {
-            $totalPending = $statusFilter === 'Pending' ? $ordersQuery->count() : 0;
-            $totalProcessing = $statusFilter === 'Processing' ? $ordersQuery->count() : 0;
-            $totalCompleted = $statusFilter === 'Completed' ? $ordersQuery->count() : 0;
-            $totalCancelled = $statusFilter === 'Cancelled' ? $ordersQuery->count() : 0;
-            $totalOrders = $ordersQuery->count(); // Total number of filtered orders
-        } else {
-            $totalPending = Order::where('status', 'Pending')->count();
-            $totalProcessing = Order::where('status', 'Processing')->count();
-            $totalCompleted = Order::where('status', 'Completed')->count();
-            $totalCancelled = Order::where('status', 'Cancelled')->count();
-            $totalOrders = Order::count(); // Total number of all orders
-        }
+        // Get paginated orders
+        $orders = $ordersQuery->orderBy('id', 'desc')->paginate(5)->appends([
+            'user_id' => $request->user_id,
+            'status' => $request->status,
+        ]);
+
+        // Totals (using unpaginated filtered query)
+        $totalOrders = $totalsQuery->count();
+        $totalPending = (clone $totalsQuery)->where('status', 'Pending')->count();
+        $totalProcessing = (clone $totalsQuery)->where('status', 'Processing')->count();
+        $totalOutForDelivery = (clone $totalsQuery)->where('status', 'Out for Delivery')->count();
+        $totalCompleted = (clone $totalsQuery)->where('status', 'Completed')->count();
+        $totalCancelled = (clone $totalsQuery)->where('status', 'Cancelled')->count();
 
         return view('admin.order.index', compact(
             'users',
@@ -54,22 +57,45 @@ class OrderController extends Controller
             'totalOrders',
             'totalPending',
             'totalProcessing',
+            'totalOutForDelivery',
             'totalCompleted',
             'totalCancelled',
             'userFilter',
             'statusFilter'
         ));
     }
+
+
+
+
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $order->update([
+            'status' => $request->input('status'),
+        ]);
+
+        return redirect()->back()->with('success', 'Order status updated successfully!');
+    }
     // Checkout single product from cart
     public function checkout($id)
     {
+        $user = Auth::user();
+
+        if (empty($user->phone) || empty($user->address)) {
+            return redirect()->back()->with('error', 'Please update your phone and address before checking out.');
+        }
+
         $cartItem = Cart::where('id', $id)->where('user_id', Auth::id())->first();
 
         if (!$cartItem) {
             return redirect()->back()->with('error', 'Cart item not found.');
         }
 
-        $additionalPrice = 0;
+        $additionalPrice = 0; // Default additional price
 
         if ($cartItem->size === 'small') {
             $additionalPrice = 300;
@@ -89,35 +115,59 @@ class OrderController extends Controller
             'price'      => $cartItem->price,
             'status'     => 'Pending',
             'total_price' => $finalPrice * $cartItem->quantity, // Calculate total price
+            'payment_method' => 'COD', // Assuming cash payment for simplicity
+            'address' => $user->address,
+            'phone' => $user->phone,
         ]);
 
         $cartItem->delete();
 
-        return redirect()->back()->with('success', 'Product checked out successfully!');
+        return redirect()->route('client.orders.index')->with('success', 'Product checked out successfully!');
     }
 
     // Checkout all cart items
     public function checkoutAll()
     {
+        $user = Auth::user();
+
+        if (empty($user->phone) || empty($user->address)) {
+            return redirect()->back()->with('error', 'Please update your phone and address before checking out.');
+        }
+
         $cartItems = Cart::where('user_id', Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
             return redirect()->back()->with('error', 'No items in the cart.');
         }
 
-        foreach ($cartItems as $cart) {
+        $additionalPrice = 0; // Default additional price
+        foreach ($cartItems as $cartItem) {
+            if ($cartItem->size === 'small') {
+                $additionalPrice = 300;
+            } elseif ($cartItem->size === 'medium') {
+                $additionalPrice = 500;
+            } elseif ($cartItem->size === 'large') {
+                $additionalPrice = 800;
+            }
+
+            $finalPrice = $cartItem->price + $additionalPrice;
+
             Order::create([
                 'user_id'    => Auth::id(),
-                'product_id' => $cart->product_id,
-                'size'       => $cart->size,
-                'quantity'   => $cart->quantity,
-                'price'      => $cart->price,
+                'product_id' => $cartItem->product_id,
+                'size'       => $cartItem->size,
+                'quantity'   => $cartItem->quantity,
+                'price'      => $cartItem->price,
                 'status'     => 'Pending',
+                'total_price' => $finalPrice * $cartItem->quantity, // Calculate total price
+                'payment_method' => 'COD', // Assuming cash payment for simplicity
+                'address' => $user->address,
+                'phone' => $user->phone,
             ]);
-
-            $cart->delete();
         }
 
-        return redirect()->back()->with('success', 'All products checked out successfully!');
+        Cart::where('user_id', Auth::id())->delete();
+
+        return redirect()->route('client.orders.index')->with('success', 'All products checked out successfully!');
     }
 }
