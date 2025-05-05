@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Product') }}
+            {{ __('Perfume Management') }}
         </h2>
     </x-slot>
 
@@ -86,8 +86,8 @@
                                 <th>Small (10-20ml)</th>
                                 <th>Medium (30-50ml)</th>
                                 <th>Large (100-200ml)</th>
-                                <th>Created At</th>
-                                <th>Updated At</th>
+                                <!-- <th>Created At</th>
+                                <th>Updated At</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -95,24 +95,24 @@
                         <tbody>
                             @forelse ($products as $product)
                             <tr>
-                                <td class="align-middle">{{ $loop->iteration }}</td>
-                                <td class="align-middle">{{ $product->title }}</td>
-                                <td class="align-middle">{{ $product->category }}</td>
-                                <td class="align-middle">
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $products->firstItem() + $loop->index }}</td>
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $product->title }}</td>
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">{{ $product->category }}</td>
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">
                                     <img src="{{ asset('images/products/' . $product->image) }}" alt="Product Image" width="80">
                                 </td>
-                                <td class="align-middle">
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">
                                     {{ $product->stock_small ? $product->stock_small . ' pcs - ₱' . $product->price_small : 'No stock' }}
                                 </td>
-                                <td class="align-middle">
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">
                                     {{ $product->stock_medium ? $product->stock_medium . ' pcs - ₱' . $product->price_medium : 'No stock' }}
                                 </td>
-                                <td class="align-middle">
+                                <td class="align-middle clickable-row" data-product="{{ json_encode($product) }}" data-bs-toggle="modal" data-bs-target="#detailsModal">
                                     {{ $product->stock_large ? $product->stock_large . ' pcs - ₱' . $product->price_large : 'No stock' }}
                                 </td>
 
-                                <td class="align-middle">{{ $product->created_at }}</td>
-                                <td class="align-middle">{{ $product->updated_at }}</td>
+                                <!-- <td class="align-middle">{{ $product->created_at }}</td>
+                                <td class="align-middle">{{ $product->updated_at }}</td> -->
                                 <td class="align-middle">
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="{{ route('admin.products.edit', ['id' => $product->id]) }}" class="btn btn-secondary">Edit</a>
@@ -134,7 +134,7 @@
 
                     <!-- Pagination Section -->
                     <div class="d-flex justify-content-center mt-1">
-                        <nav aria-label="Page navigation">
+                        <div aria-label="Page navigation">
                             <ul class="pagination pagination-sm">
                                 {{-- Check if there are pages --}}
                                 @if ($products->lastPage() > 1)
@@ -160,7 +160,7 @@
                                     </li>
                                     @endif
                             </ul>
-                        </nav>
+                        </div>
                     </div>
 
                 </div>
@@ -191,7 +191,61 @@
         </div>
     </div>
 
+    <!-- Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img id="modalProductImage" src="" alt="Product Image" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-8">
+                            <p class="text-gray-900"><strong>Title:</strong> <span id="modalTitle"></span></p>
+                            <p class="text-gray-900"><strong>Category:</strong> <span id="modalCategory"></span></p>
+                            <p class="text-gray-900"><strong>Small:</strong> <span id="modalSmall"></span></p>
+                            <p class="text-gray-900"><strong>Medium:</strong> <span id="modalMedium"></span></p>
+                            <p class="text-gray-900"><strong>Large:</strong> <span id="modalLarge"></span></p>
+                            <p class="text-gray-900"><strong>Created At:</strong> <span id="modalCreatedAt"></span></p>
+                            <p class="text-gray-900"><strong>Updated At:</strong> <span id="modalUpdatedAt"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".clickable-row").forEach(function(row) {
+                row.addEventListener("click", function() {
+                    const product = JSON.parse(this.getAttribute("data-product"));
+
+                    document.getElementById("modalProductImage").src = `{{ asset('images/products/') }}/${product.image}`;
+                    document.getElementById("modalTitle").innerText = product.title;
+                    document.getElementById("modalCategory").innerText = product.category;
+                    document.getElementById("modalSmall").innerText = product.stock_small ?
+                        `${product.stock_small} pcs - ₱${product.price_small}` :
+                        "No stock";
+                    document.getElementById("modalMedium").innerText = product.stock_medium ?
+                        `${product.stock_medium} pcs - ₱${product.price_medium}` :
+                        "No stock";
+                    document.getElementById("modalLarge").innerText = product.stock_large ?
+                        `${product.stock_large} pcs - ₱${product.price_large}` :
+                        "No stock";
+                    document.getElementById("modalCreatedAt").innerText = product.created_at ? new Date(product.created_at).toLocaleString() : 'N/A';
+                    document.getElementById("modalUpdatedAt").innerText = product.updated_at ? new Date(product.updated_at).toLocaleString() : 'N/A';
+                });
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             var deleteModal = document.getElementById('deleteModal');
             deleteModal.addEventListener('show.bs.modal', function(event) {
@@ -234,6 +288,15 @@
         .pagination .page-item .page-link:hover {
             background-color: #f8d7da;
             color: #800000;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:hover {
+            background-color: #f8f9fa;
+            /* Light gray background on hover */
         }
     </style>
 

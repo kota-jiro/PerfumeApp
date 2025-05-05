@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function indexAll()
     {
-        $filteredProducts = Product::all(); // Keep it as a collection
+        $filteredProducts = Product::orderBy('id', 'asc')->paginate(8); // Add pagination
 
         $maleCount = Product::where('category', 'Male Perfume')->count();
         $femaleCount = Product::where('category', 'Female Perfume')->count();
@@ -23,11 +23,15 @@ class ProductController extends Controller
     {
         $category = $request->input('category');
 
-        $filteredProducts = Product::when($category && $category !== 'All', function ($query) use ($category) {
+        $query = Product::when($category && $category !== 'All', function ($query) use ($category) {
             return $query->where('category', $category);
-        })
-            ->orderBy('id', 'asc')
-            ->get();
+        });
+
+        $filteredProducts = $query->orderBy('id', 'asc')
+            ->paginate(8)
+            ->appends([
+                'category' => $request->input('category'),
+            ]);
 
         $maleCount = Product::where('category', 'Male Perfume')->count();
         $femaleCount = Product::where('category', 'Female Perfume')->count();

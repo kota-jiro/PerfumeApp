@@ -62,14 +62,24 @@
             <!-- Phone -->
             <div>
                 <x-input-label for="phone" :value="__('Phone')" />
-                <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('phone', $user->phone)" autocomplete="phone" />
+                <div class="flex items-center">
+                    <span class="px-3 py-2 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md text-gray-600">+63</span>
+                    <x-text-input id="phone" name="phone" type="number" class="mt-1 block w-full border-gray-300 rounded-r-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('phone', $user->phone)" maxlength="9" oninput="if(this.value.length > 9) this.value = this.value.slice(0, 9);" autocomplete="phone" />
+                </div>
                 <x-input-error class="mt-2" :messages="$errors->get('phone')" />
             </div>
 
             <!-- Address -->
             <div>
                 <x-input-label for="address" :value="__('Address')" />
-                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" :value="old('address', $user->address)" autocomplete="address" />
+                <select id="address" name="address" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="" disabled selected>{{ __('Select your address in Cebu') }}</option>
+                    <option value="Liloan" {{ old('address', $user->address) === 'Liloan' ? 'selected' : '' }}>Liloan</option>
+                    <option value="Consolacion" {{ old('address', $user->address) === 'Consolacion' ? 'selected' : '' }}>Consolacion</option>
+                    <option value="Mandaue City" {{ old('address', $user->address) === 'Mandaue City' ? 'selected' : '' }}>Mandaue City</option>
+                    <option value="Lapu-Lapu City" {{ old('address', $user->address) === 'Lapu-Lapu City' ? 'selected' : '' }}>Lapu-Lapu City</option>
+                    <option value="Cebu City" {{ old('address', $user->address) === 'Cebu City' ? 'selected' : '' }}>Cebu City</option>
+                </select>
                 <x-input-error class="mt-2" :messages="$errors->get('address')" />
             </div>
         @endif
