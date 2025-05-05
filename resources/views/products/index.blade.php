@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-6 bg-light">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <!-- Categories Section -->
@@ -42,6 +42,36 @@
                         </div>
                         @endif
                     </div>
+
+                    <!-- Pagination Section -->
+                    <div class="d-flex justify-content-center mt-3">
+                        <div aria-label="Page navigation">
+                            <ul class="pagination pagination-sm">
+                                @if ($filteredProducts->lastPage() > 1)
+                                {{-- Previous Page Link --}}
+                                <li class="page-item {{ $filteredProducts->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $filteredProducts->previousPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" tabindex="-1" aria-disabled="{{ $filteredProducts->onFirstPage() ? 'true' : 'false' }}">
+                                        &laquo;
+                                    </a>
+                                </li>
+
+                                {{-- Pagination Elements --}}
+                                @for ($i = 1; $i <= $filteredProducts->lastPage(); $i++)
+                                    <li class="page-item {{ $i == $filteredProducts->currentPage() ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $filteredProducts->url($i) }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}">{{ $i }}</a>
+                                    </li>
+                                    @endfor
+
+                                    {{-- Next Page Link --}}
+                                    <li class="page-item {{ $filteredProducts->hasMorePages() ? '' : 'disabled' }}">
+                                        <a class="page-link" href="{{ $filteredProducts->nextPageUrl() }}{{ request()->has('usertype') ? '&usertype=' . request('usertype') : '' }}" aria-disabled="{{ $filteredProducts->hasMorePages() ? 'false' : 'true' }}">
+                                            &raquo;
+                                        </a>
+                                    </li>
+                                    @endif
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,7 +99,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline-danger" id="addToCartBtn">Add to Cart</button>
-                    <button class="btn btn-danger" id="checkoutBtn">Checkout</button>
+                    <button class="btn btn-danger" id="checkoutBtn" style="pointer: none; cursor: not-allowed;">Checkout</button>
                 </div>
             </div>
         </div>
@@ -109,7 +139,8 @@
                     <!-- Message will be dynamically inserted here -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">OK</button>
+                    <a href="{{ route('cart.index') }}" class="btn btn-danger">View Cart</a>
                 </div>
             </div>
         </div>
@@ -419,4 +450,36 @@
             }
         });
     </script>
+    <style>
+        .pagination .page-item .page-link {
+            color: #800000;
+            /* Leo’s Perfume brand red */
+            border-radius: 0.375rem;
+            margin: 0 2px;
+            transition: background-color 0.2s ease-in-out;
+            padding: 0.25rem 0.6rem;
+            /* smaller height & width */
+            font-size: 0.875rem;
+            /* smaller font size */
+            min-width: 35px;
+            /* consistent width */
+            height: 30px;
+            /* consistent height */
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #800000;
+            color: white;
+            border-color: #800000;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #f8d7da;
+            color: #800000;
+        }
+    </style>
 </x-app-layout>
