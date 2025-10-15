@@ -19,5 +19,22 @@
       "email": "carlosm@gmail.com",
       "password": "librarypass"
     }
+  ],
+  "login": [
+    {
+      "id": 1,
+      "email": "joshplay@gmail.com",
+      "password": "password123"
+    },
+    {
+      "id": 2,
+      "email": "janesmith@gmail.com",
+      "password": "mypassword"
+    },
+    {
+      "id": 3,
+      "email": "carlosm@gmail.com",
+      "password": "librarypass"
+    }
   ]
 }
