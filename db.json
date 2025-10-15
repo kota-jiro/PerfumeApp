@@ -1,0 +1,23 @@
+{
+ "register": [
+    {
+      "id": 1,
+      "firstname": "Joshua Mark",
+      "lastname": "Playda",
+      "email": "joshplay@gmail.com",
+      "password": "password123"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "janesmith@gmail.com",
+      "password": "mypassword"
+    },
+    {
+      "id": 3,
+      "name": "Carlos Mendoza",
+      "email": "carlosm@gmail.com",
+      "password": "librarypass"
+    }
+  ]
+}
