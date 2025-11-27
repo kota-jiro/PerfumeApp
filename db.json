@@ -9,14 +9,14 @@
     },
     {
       "id": 2,
-      "name": "Jane Smith",
-      "email": "janesmith@gmail.com",
+      "name": "Alma Fe",
+      "email": "alma@gmail.com",
       "password": "mypassword"
     },
     {
       "id": 3,
-      "name": "Carlos Mendoza",
-      "email": "carlosm@gmail.com",
+      "name": "Ced Ric",
+      "email": "ced@gmail.com",
       "password": "librarypass"
     }
   ],
@@ -24,17 +24,36 @@
     {
       "id": 1,
       "email": "joshplay@gmail.com",
-      "password": "password123"
+      "password": "123123123"
     },
     {
       "id": 2,
-      "email": "janesmith@gmail.com",
+         "email": "alma@gmail.com",
       "password": "mypassword"
     },
     {
       "id": 3,
-      "email": "carlosm@gmail.com",
-      "password": "librarypass"
+      "email": "cedced@gmail.com",
+      "password": "ced123123"
     }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Versace Pour Homme",
+      "category": "Male Perfume",
+      "description": "A high-performance laptop suitable for all your computing needs.",
+      "small_price": 1200,
+      "small_size": 10
+    },
+    {
+      "id": 2,
+      "name": "Chanel No. 5",
+      "category": "Female Perfume",
+      "description": "A powerful gaming laptop with advanced graphics capabilities.", 
+      "small_price": 1500,
+      "small_size": 5
+    }
+    
   ]
 }
